@@ -20,7 +20,7 @@ pipeline {
                     docker rm -f nginx-site || true
                     docker run -d \
                       --name nginx-site \
-                      -p 8081:80 \
+                      -p 9200:80 \
                       mon-site-nginx:latest
                 '''
             }
