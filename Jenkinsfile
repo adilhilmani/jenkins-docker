@@ -2,12 +2,27 @@ pipeline {
     agent any
 
     stages {
-        stage('Test Docker') {
+        stage('Checkout') {
             steps {
-                sh 'whoami'
-                sh 'ls -l /var/run/docker.sock || true'
-                sh 'docker version'
-                sh 'docker ps'
+                checkout scm
+            }
+        }
+
+        stage('Build image') {
+            steps {
+                sh 'docker build -t mon-site-nginx:latest .'
+            }
+        }
+
+        stage('Deploy container') {
+            steps {
+                sh '''
+                    docker rm -f nginx-site || true
+                    docker run -d \
+                      --name nginx-site \
+                      -p 9200:80 \
+                      mon-site-nginx:latest
+                '''
             }
         }
     }
